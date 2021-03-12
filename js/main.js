@@ -38,6 +38,25 @@ async function start() {
 
   // if we got a logged-in user
   if (currentUser) updateUIOnUserLogin();
+  if (currentUser) $('#nav-favorite').toggleClass('hidden');
+  $('#nav-favorite').on('click',function(){
+    $allStoriesList.empty();
+    for(let story of currentUser.favorites){
+      let newStory = generateStoryMarkup(story);
+      $allStoriesList.append(newStory);
+    }
+    $('li').each(function(){
+      let stringId = this.id.toString().substring(5);
+      currentUser.favorites.map(function(v){
+        if(v.storyId.toString()==stringId){
+          $(`#story${v.storyId} input`).prop('checked',true);
+          $(`#story${v.storyId} span`).toggleClass('large-star');
+          $(`#story${v.storyId} span`).html('&#11088');
+        }
+      })
+    })
+  })
+
 }
 
 // Once the DOM is entirely loaded, begin the app

@@ -20,7 +20,7 @@ async function getAndShowStoriesOnStart() {
  */
 
 function generateStoryMarkup(story) {
-  // console.debug("generateStoryMarkup", story);
+  console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
   return $(`
@@ -57,7 +57,6 @@ function putStoriesOnPage() {
         $(`#story${story.storyId} span`).toggleClass('large-star');
         $(`#story${story.storyId} span`).html('&#11088');
         currentUser.addToFavorites(story);
-        console.log(currentUser.favorites);
         await axios.post(`https://hack-or-snooze-v3.herokuapp.com/users/${currentUser.username}/favorites/${story.storyId}?`,{"token": currentUser.loginToken});
       } else {
         $(`#story${story.storyId} span`).toggleClass('large-star');
@@ -68,6 +67,16 @@ function putStoriesOnPage() {
   }
 
   $allStoriesList.show();
+  $('li').each(function(){
+    let stringId = this.id.toString().substring(5);
+    currentUser.favorites.map(function(v){
+      if(v.storyId.toString()==stringId){
+        $(`#story${v.storyId} input`).prop('checked',true);
+        $(`#story${v.storyId} span`).toggleClass('large-star');
+        $(`#story${v.storyId} span`).html('&#11088');
+      }
+    })
+  })
 }
 async function submitStoryForm() {
   let story = { author: $('#story-author').val(), title: $('#story-title').val(), url: $('#story-url').val() }
