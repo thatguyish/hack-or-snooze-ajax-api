@@ -6,7 +6,9 @@
 #favorite-check{
 display: none;
 }
-
+/* #favorite-star{
+  font-size: large;
+} */
 .stories-list > li {
   color: gray;
   font-size: 0.8rem;
@@ -27,6 +29,17 @@ display: none;
   font-size: 0.85rem;
   font-weight: normal;
   margin: 18px 0;
+}
+
+.large-star{
+  font-size: 1.35rem;
+  position: relative;
+  top: 2px;
+}
+
+#star-checkbox{
+  position: relative;
+  height: 41.5px;
 }
 
 .story-link:hover {

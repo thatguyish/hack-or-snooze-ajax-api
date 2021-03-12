@@ -27,7 +27,7 @@ function generateStoryMarkup(story) {
       <li id="story${story.storyId}">
         <label id="star-checkbox">
           <input type="checkbox" id="favorite-check"/>
-          <span id="favorite-star">&#9734;</span>
+          <span id="favorite-star" class="large-star">&#9734;</span>
         </label>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
@@ -52,21 +52,26 @@ function putStoriesOnPage() {
     const $story = generateStoryMarkup(story);
     $allStoriesList.append($story);
 
-    $(`#story${story.storyId} input`).on('click',function (){
-      if($(`#story${story.storyId} input`).is(":checked")){
+    $(`#story${story.storyId} input`).on('click', async function () {
+      if ($(`#story${story.storyId} input`).is(":checked")) {
+        $(`#story${story.storyId} span`).toggleClass('large-star');
         $(`#story${story.storyId} span`).html('&#11088');
-      }else{
+        currentUser.addToFavorites(story);
+        console.log(currentUser.favorites);
+        await axios.post(`https://hack-or-snooze-v3.herokuapp.com/users/${currentUser.username}/favorites/${story.storyId}?`,{"token": currentUser.loginToken});
+      } else {
+        $(`#story${story.storyId} span`).toggleClass('large-star');
         $(`#story${story.storyId} span`).html('&#9734');
-        
+        await axios.delete(`https://hack-or-snooze-v3.herokuapp.com/users/${currentUser.username}/favorites/${story.storyId}?`,{data:{"token": currentUser.loginToken}});
       }
     });
   }
 
   $allStoriesList.show();
 }
-async function submitStoryForm(){
-  let story = {author:$('#story-author').val(),title:$('#story-title').val(),url:$('#story-url').val()}
-  await storyList.addStory(currentUser,story);
+async function submitStoryForm() {
+  let story = { author: $('#story-author').val(), title: $('#story-title').val(), url: $('#story-url').val() }
+  await storyList.addStory(currentUser, story);
 
 }
 $('#story-submit-button').on('click', submitStoryForm)

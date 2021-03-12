@@ -76,13 +76,13 @@ class StoryList {
   async addStory(user, newStory) {
     // Add story to database
     let response = await axios.post("https://hack-or-snooze-v3.herokuapp.com/stories?", {
-        "token": user.loginToken,
-        "story": {
-          "title": newStory.title,
-          "author": newStory.author,
-          "url": `https://${newStory.url}`
-        }
-      
+      "token": user.loginToken,
+      "story": {
+        "title": newStory.title,
+        "author": newStory.author,
+        "url": `https://${newStory.url}`
+      }
+
     });
     return new Story(response.data.story);
   }
@@ -118,6 +118,17 @@ class User {
     // store the login token on the user so it's easy to find for API calls.
     this.loginToken = token;
   }
+  
+  addToFavorites(chstory) {
+    this.favorites.push(chstory);
+    console.log(this.favorites);
+  }
+  removeFromFavorites(chstory) {
+    let index = this.favorites.indexOf(chstory);
+    this.favorites.splice(index,1);
+    console.log(this.favorites);
+  }
+
 
   /** Register new user in API, make User instance & return it.
    *
@@ -125,7 +136,6 @@ class User {
    * - password: a new password
    * - name: the user's full name
    */
-
   static async signup(username, password, name) {
     const response = await axios({
       url: `${BASE_URL}/signup`,
