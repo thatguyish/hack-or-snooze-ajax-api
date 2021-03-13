@@ -56,7 +56,6 @@ async function start() {
       })
     })
   })
-
 }
 
 // Once the DOM is entirely loaded, begin the app

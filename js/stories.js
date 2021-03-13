@@ -35,6 +35,7 @@ function generateStoryMarkup(story) {
         <small class="story-hostname">(${hostName})</small>
         <small class="story-author">by ${story.author}</small>
         <small class="story-user">posted by ${story.username}</small>
+        <button id="deleteButton">Delete</button>
       </li>
     `);
 }
@@ -51,7 +52,7 @@ function putStoriesOnPage() {
   for (let story of storyList.stories) {
     const $story = generateStoryMarkup(story);
     $allStoriesList.append($story);
-
+    $(`#story${story.storyId} button`).on('click', deleteStory);
     $(`#story${story.storyId} input`).on('click', async function () {
       if ($(`#story${story.storyId} input`).is(":checked")) {
         $(`#story${story.storyId} span`).toggleClass('large-star');
@@ -63,6 +64,7 @@ function putStoriesOnPage() {
         $(`#story${story.storyId} span`).html('&#9734');
         await axios.delete(`https://hack-or-snooze-v3.herokuapp.com/users/${currentUser.username}/favorites/${story.storyId}?`,{data:{"token": currentUser.loginToken}});
       }
+      location.reload();
     });
   }
 
@@ -81,6 +83,12 @@ function putStoriesOnPage() {
 async function submitStoryForm() {
   let story = { author: $('#story-author').val(), title: $('#story-title').val(), url: $('#story-url').val() }
   await storyList.addStory(currentUser, story);
-
+  location.reload();
 }
-$('#story-submit-button').on('click', submitStoryForm)
+$('#story-submit-button').on('click', submitStoryForm);
+
+ async function deleteStory(){
+  let stringId = $(this).parent().prop('id').toString().substring(5);
+  await axios.delete(`https://hack-or-snooze-v3.herokuapp.com/stories/${stringId}?`,{data:{"token": currentUser.loginToken}});
+  location.reload();
+ }
